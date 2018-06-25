@@ -25,6 +25,7 @@ class Heimdall(object):
     def _smtp_server(self):
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
+        server.login(SERVER_EMAIL, SERVER_PASSWORD)
         return server
 
     def _notify(self, subject, body, to=[]):
