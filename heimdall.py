@@ -48,7 +48,8 @@ class Heimdall(object):
         should_notify = False
         if terminal_string_type == 'process' and not re.findall(identifier, watched_string):
             should_notify = True
-        if terminal_string_type == 'service' and re.findall(identifier, watched_string) and re.findall('stop', watched_string):
+        stop_regex = identifier + '\s*' + 'stop/waiting'
+        if terminal_string_type == 'service' and re.findall(stop_regex, watched_string):
             should_notify = True
         print should_notify
         return should_notify
