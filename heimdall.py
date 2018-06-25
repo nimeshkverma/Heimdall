@@ -36,6 +36,7 @@ class Heimdall(object):
                 msg['Subject'] = subject
                 msg.attach(MIMEText(body, 'plain'))
                 text = msg.as_string()
+                self.smtp_server.sendmail(SERVER_EMAIL, to_email, text)
         except Exception as e:
             self.smtp_server.sendmail(
                 SERVER_EMAIL, SERVER_EMAIL, 'Error in Heimdall due to {e}'.format(e=str(e)))
