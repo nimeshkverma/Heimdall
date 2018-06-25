@@ -44,6 +44,15 @@ class Heimdall(object):
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
         return proc.stdout.read()
 
+    def _should_notify(self, terminal_string_type, identifier, watched_string):
+        should_notify = False
+        if terminal_string_type == 'process' and not re.findall(identifier, watched_string):
+            should_notify = True
+        if terminal_string_type == 'service' and re.findall(identifier, watched_string) and re.findall('stop', watched_string):
+            should_notify = True
+        print should_notify
+        return should_notify
+
     def _clean(self):
         self.smtp_server.quit()
 
@@ -51,7 +60,7 @@ class Heimdall(object):
         for terminal_string_type, notification_triggers in NOTIFICATION_DETAILS.iteritems():
             for notification_trigger in notification_triggers:
                 for identifier in notification_trigger.get('identifiers', []):
-                    if not re.findall(identifier, self.watched.get(terminal_string_type, '')):
+                    if self._should_notify(terminal_string_type, identifier, self.watched.get(terminal_string_type, '')):
                         self._notify(notification_trigger.get('subject', 'Notification from Heimdall'),
                                      notification_trigger.get(
                                          'body', 'Notification from Heimdall'),
